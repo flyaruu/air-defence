@@ -1,4 +1,9 @@
-use std::{fs::File, io::{BufRead, BufReader}, sync::mpsc, thread::spawn};
+use std::{
+    fs::File,
+    io::{BufRead, BufReader},
+    sync::mpsc,
+    thread::spawn,
+};
 
 use crate::{fire_unit::FireUnit, iff::IFF, radar::Radar};
 
@@ -19,9 +24,8 @@ pub fn run_simulation(delay_in_millis: u64, path: &str) {
     let fire_order_handle = spawn(move || {
         fire_unit.listen();
     });
-    
+
     radar_handle.join().unwrap();
     iff_handle.join().unwrap();
     fire_order_handle.join().unwrap();
-
 }

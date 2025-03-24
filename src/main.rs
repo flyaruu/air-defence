@@ -1,10 +1,9 @@
-
 use clap::Parser;
 use simulation::run_simulation;
 
-mod radar;
-mod iff;
 mod fire_unit;
+mod iff;
+mod radar;
 mod simulation;
 
 #[derive(Parser, Debug)]
@@ -29,4 +28,3 @@ fn main() {
     env_logger::init();
     run_simulation(args.delay, &args.path);
 }
-
