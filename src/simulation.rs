@@ -5,7 +5,7 @@ use std::{
     thread::spawn,
 };
 
-use crate::{fire_unit::FireUnit, iff::IFF, radar::Radar};
+use crate::{fire_unit::FireUnit, iff::Iff, radar::Radar};
 
 pub fn run_simulation(delay_in_millis: u64, path: &str) {
     let (radar_sender, radar_receiver) = mpsc::channel();
@@ -16,7 +16,7 @@ pub fn run_simulation(delay_in_millis: u64, path: &str) {
         radar.run();
     });
     let (fire_order_sender, fire_order_receiver) = mpsc::channel();
-    let iff = IFF::new(radar_receiver, fire_order_sender);
+    let iff = Iff::new(radar_receiver, fire_order_sender);
     let iff_handle = spawn(move || {
         iff.listen();
     });

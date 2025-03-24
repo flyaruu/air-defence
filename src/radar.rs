@@ -19,7 +19,7 @@ impl<S: Iterator<Item = Result<String, std::io::Error>>> Radar<S> {
     pub fn new(sender: Sender<RadarMessage>, source: S, delay_in_millis: u64) -> Self {
         info!("Starting radar");
         Self {
-            sender: sender,
+            sender,
             lines: source,
             delay_in_millis,
         }

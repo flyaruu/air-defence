@@ -4,12 +4,12 @@ use log::{info, warn};
 
 use crate::{IFFMessage, radar::RadarMessage};
 
-pub struct IFF {
+pub struct Iff {
     radar_receiver: Receiver<RadarMessage>,
     fire_order_sender: Sender<IFFMessage>,
 }
 
-impl IFF {
+impl Iff {
     pub fn new(
         radar_receiver: Receiver<RadarMessage>,
         fire_order_sender: Sender<IFFMessage>,
@@ -50,8 +50,8 @@ impl IFF {
 
 fn is_hostile(values: Vec<u8>) -> bool {
     let odd_count = values.iter().filter(|value| *value % 2 != 0).count();
-    let is_hostile = odd_count << 1 > values.len();
-    is_hostile
+    
+    odd_count << 1 > values.len()
 }
 
 #[cfg(test)]
