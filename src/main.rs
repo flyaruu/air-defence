@@ -18,13 +18,15 @@ struct Args {
     delay: u64,
 }
 
+#[derive(Debug, Clone)]
 pub enum IFFMessage {
     Fire,
     IFFShutDown,
 }
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let args = Args::parse();
     env_logger::init();
-    run_simulation(args.delay, &args.path);
+    run_simulation(args.delay, &args.path).await;
 }

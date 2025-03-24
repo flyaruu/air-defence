@@ -1,8 +1,9 @@
-use std::{sync::mpsc::Sender, thread, time::Duration};
+use std::time::Duration;
 
 use log::info;
+use tokio::{sync::broadcast::Sender, time::sleep};
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub enum RadarMessage {
     Received(Vec<u8>),
     ScanError,
@@ -41,10 +42,10 @@ impl<S: Iterator<Item = Result<String, std::io::Error>>> Radar<S> {
         end_of_data
     }
 
-    pub fn run(&mut self) {
+    pub async fn run(&mut self) {
         while !self.emit() {
             info!("Tick!");
-            thread::sleep(Duration::from_millis(self.delay_in_millis));
+            sleep(Duration::from_millis(self.delay_in_millis)).await;
         }
     }
 }

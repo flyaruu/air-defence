@@ -1,6 +1,6 @@
-use std::sync::mpsc::{Receiver, Sender};
 
 use log::{info, warn};
+use tokio::sync::broadcast::{Receiver, Sender};
 
 use crate::{IFFMessage, radar::RadarMessage};
 
@@ -20,9 +20,9 @@ impl Iff {
         }
     }
 
-    pub fn listen(&self) {
+    pub async fn listen(&mut self) {
         loop {
-            match self.radar_receiver.recv() {
+            match self.radar_receiver.recv().await {
                 Ok(msg) => match msg {
                     RadarMessage::Received(items) => {
                         if is_hostile(items) {

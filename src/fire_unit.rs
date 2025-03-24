@@ -1,7 +1,6 @@
-use std::sync::mpsc::Receiver;
-
 use log::{info, warn};
 use rand::Rng;
+use tokio::sync::broadcast::Receiver;
 
 use crate::IFFMessage;
 
@@ -17,9 +16,9 @@ impl FireUnit {
         }
     }
 
-    pub fn listen(&mut self) {
+    pub async fn listen(&mut self) {
         loop {
-            match self.fire_order_receiver.recv() {
+            match self.fire_order_receiver.recv().await {
                 Ok(msg) => match msg {
                     IFFMessage::Fire => fire(),
                     IFFMessage::IFFShutDown => {
