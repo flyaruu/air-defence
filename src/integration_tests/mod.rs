@@ -11,7 +11,9 @@ mod tests {
         let c = Cursor::new(DATA);
 
         let b = BufReader::new(c);
-        let statistics = run_simulation_reader(0, 100, b).await.expect("error sending message");
+        let statistics = run_simulation_reader(0, 100, b)
+            .await
+            .expect("error sending message");
         assert_eq!(10, statistics.friendlies_detected);
         assert_eq!(10, statistics.hostile_detected);
         assert_eq!(20, statistics.scans);
