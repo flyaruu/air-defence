@@ -37,7 +37,7 @@ impl FireUnit {
                     }
                 },
                 Err(_) => {
-                    warn!("IFF channel interrupted, shutting down Fire Unit");
+                    info!("IFF channel interrupted, shutting down Fire Unit");
                     break;
                 }
             }
@@ -48,6 +48,6 @@ impl FireUnit {
         info!("Firing missile!");
         self.fire_unit_sender
             .send(FireUnitMessage::MissileFired(iff_message))
-            .unwrap();
+            .expect("error sending message");
     }
 }

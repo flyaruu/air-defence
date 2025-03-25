@@ -34,7 +34,7 @@ impl Stats {
         Self { statistics }
     }
 
-    pub async fn get_statistics(&self)->Statistics {
+    pub async fn get_statistics(&self) -> Statistics {
         self.statistics.lock().await.clone()
     }
 
@@ -173,5 +173,4 @@ impl Statistics {
         // Set the default alignment for the third column to right
         println!("{table}");
     }
-
 }

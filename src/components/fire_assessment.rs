@@ -35,7 +35,7 @@ impl FireAssessment {
             let more_data = match self.fire_unit_receiver.recv().await {
                 Ok(msg) => self.assess_missile(msg).await,
                 Err(_) => {
-                    warn!("Fire unit channel interrupted, shutting down Fire assessment Unit");
+                    info!("Fire unit channel interrupted, shutting down Fire assessment Unit");
                     // self.fire_assessment_sender
                     break;
                 }
@@ -56,12 +56,12 @@ impl FireAssessment {
                     // Should not unwrap, sending can fail when no receivers are present
                     self.fire_assessment_sender
                         .send(FireAssessmentMessage::Hit(msg))
-                        .unwrap();
+                        .expect("error sending message");
                 } else {
                     info!("... miss!");
                     self.fire_assessment_sender
                         .send(FireAssessmentMessage::Miss(msg))
-                        .unwrap();
+                        .expect("error sending message");
                 }
             }
             FireUnitMessage::FireUnitShutdown => {

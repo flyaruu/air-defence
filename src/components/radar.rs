@@ -39,7 +39,7 @@ impl<S: Iterator<Item = Result<String, std::io::Error>>> Radar<S> {
                 RadarMessage::EndOfData
             }
         };
-        self.sender.send(message).unwrap();
+        self.sender.send(message).expect("error sending message");
         end_of_data
     }
 

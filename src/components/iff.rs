@@ -33,11 +33,11 @@ impl Iff {
                         if is_hostile(items) {
                             self.iff_message_sender
                                 .send(IFFMessage::HostileDetected)
-                                .unwrap();
+                                .expect("error sending message");
                         } else {
                             self.iff_message_sender
                                 .send(IFFMessage::FriendlyDetected)
-                                .unwrap();
+                                .expect("error sending message");
                         }
                     }
                     RadarMessage::ScanIOError(error_msg) => {
@@ -57,11 +57,11 @@ impl Iff {
                         info!("Radar reports no more data, shutting down IFF");
                         self.iff_message_sender
                             .send(IFFMessage::IFFShutDown)
-                            .unwrap();
+                            .expect("error sending message");
                     }
                 },
                 Err(_) => {
-                    warn!("Radar channel was interrupted, shutting down IFF");
+                    info!("Radar channel was interrupted, shutting down IFF");
                     break;
                 }
             }
