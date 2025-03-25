@@ -17,7 +17,7 @@ I've used Rust, as it is a systems language that seems very suitable for this fi
 
 
 ## Testing
-I have some unit testing for the parsing and IFF evaluation, the rest is more 'infrastructure', which is more cumbersome to test. (Integration test?)
+I have some unit testing for the parsing and IFF evaluation, the rest is more 'infrastructure', which is more cumbersome to test. (I have included an integration test for that)
 
 ## To Do
 - CI
