@@ -11,18 +11,24 @@ mod stats;
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
-    /// Name of the person to greet
+    /// Path to the data file
     #[arg(short, long, default_value = "data.csv")]
     path: String,
 
-    /// Number of times to greet
+    /// Delay (in millis) between radar scans
     #[arg(short, long, default_value_t = 1000)]
     delay: u64,
+
+    /// Channel size between components
+    #[arg(short, long, default_value_t = 255)]
+    channel_size: usize,
 }
 
 #[tokio::main]
 async fn main() {
     let args = Args::parse();
     env_logger::init();
-    run_simulation(args.delay, &args.path).await;
+    run_simulation(args.delay, &args.path, args.channel_size)
+        .await
+        .expect("io error");
 }

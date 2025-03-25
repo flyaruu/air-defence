@@ -10,6 +10,7 @@ I've used Rust, as it is a systems language that seems very suitable for this fi
 
 ## Special attention
 - Event driven systems can be notorious to troubleshoot, I've put extra effort in the backtracability
+- Error handling. I've tried being robust in error handling, for example unreadable data messages (due to io errors or parse errors) have a variant in downstream messages, so downstream components can respond to these. The only panics I've left in is when the actoal sending/receiving infrastructure fails.
 
 
 ## Testing
@@ -19,5 +20,5 @@ I have some unit testing for the parsing and IFF evaluation, the rest is more 'i
 - CI
 - Integration test
 - Run no_alloc
-- Add statistics viewer
-- Configure buffer size
+- ~~Add statistics viewer~~
+- ~~Configurable buffer size~~

@@ -47,7 +47,11 @@ impl Stats {
                         let mut stats = stats.lock().await;
                         stats.scans += 1;
                     }
-                    RadarMessage::ScanError => {
+                    RadarMessage::ScanIOError(_) => {
+                        let mut stats = stats.lock().await;
+                        stats.scan_errors += 1;
+                    }
+                    RadarMessage::ScanIntError(_) => {
                         let mut stats = stats.lock().await;
                         stats.scan_errors += 1;
                     }

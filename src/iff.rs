@@ -40,9 +40,19 @@ impl Iff {
                                 .unwrap();
                         }
                     }
-                    RadarMessage::ScanError => {
-                        warn!("IFF received error message from radar, ignoring and continuing");
+                    RadarMessage::ScanIOError(error_msg) => {
+                        warn!(
+                            "IFF received error message: {} from radar, ignoring and continuing",
+                            error_msg
+                        );
                     }
+                    RadarMessage::ScanIntError(parse_int_error) => {
+                        warn!(
+                            "IFF received parsing message: {:?} from radar, ignoring and continuing",
+                            parse_int_error
+                        );
+                    }
+
                     RadarMessage::EndOfData => {
                         info!("Radar reports no more data, shutting down IFF");
                         self.iff_message_sender

@@ -1,12 +1,13 @@
-use std::time::Duration;
+use std::{num::ParseIntError, time::Duration};
 
 use log::info;
 use tokio::{sync::broadcast::Sender, time::sleep};
 
-#[derive(PartialEq, Eq, Debug, Clone)]
+#[derive(Debug, Clone)]
 pub enum RadarMessage {
     Received(Vec<u8>),
-    ScanError,
+    ScanIntError(ParseIntError),
+    ScanIOError(String),
     EndOfData,
 }
 
@@ -31,7 +32,7 @@ impl<S: Iterator<Item = Result<String, std::io::Error>>> Radar<S> {
         let message = match self.lines.next() {
             Some(line) => match line {
                 Ok(line) => parse_line(&line),
-                Err(_error) => RadarMessage::ScanError,
+                Err(error) => RadarMessage::ScanIOError(format!("Error: {:?}", error)),
             },
             None => {
                 end_of_data = true;
@@ -51,12 +52,19 @@ impl<S: Iterator<Item = Result<String, std::io::Error>>> Radar<S> {
 }
 
 fn parse_line(line: &str) -> RadarMessage {
+    let mut errors = vec![];
     let items = line
         .split(";")
         .map(|item| item.trim())
-        .map(|item| u8::from_str_radix(item, 2).unwrap())
+        .map(|item| u8::from_str_radix(item, 2))
+        .filter_map(|r| r.map_err(|e| errors.push(e)).ok())
         .collect();
-    RadarMessage::Received(items)
+    // If there is (at least) one error, report a parse error
+    if let Some(error) = errors.first() {
+        RadarMessage::ScanIntError(error.clone())
+    } else {
+        RadarMessage::Received(items)
+    }
 }
 
 #[cfg(test)]
@@ -65,6 +73,13 @@ mod tests {
 
     #[test]
     fn test_parser() {
-        assert_eq!(parse_line("1000;1001"), RadarMessage::Received(vec![8, 9]))
+        assert!(matches!(
+            parse_line("1000;1001"),
+            RadarMessage::Received(..)
+        ));
+        assert!(matches!(
+            parse_line("1001;monkey"),
+            RadarMessage::ScanIntError(..)
+        ))
     }
 }
