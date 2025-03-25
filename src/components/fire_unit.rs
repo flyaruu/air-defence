@@ -1,4 +1,4 @@
-use log::{info, warn};
+use log::info;
 use tokio::sync::broadcast::{Receiver, Sender};
 
 use super::iff::IFFMessage;
