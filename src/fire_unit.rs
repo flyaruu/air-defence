@@ -1,26 +1,36 @@
 use log::{info, warn};
-use rand::Rng;
-use tokio::sync::broadcast::Receiver;
+use tokio::sync::broadcast::{Receiver, Sender};
 
-use crate::IFFMessage;
+use crate::iff::IFFMessage;
 
-pub const PK: f32 = 0.8;
 pub struct FireUnit {
-    fire_order_receiver: Receiver<IFFMessage>,
+    iff_message_receiver: Receiver<IFFMessage>,
+    fire_unit_sender: Sender<FireUnitMessage>,
+}
+#[derive(Debug, Clone)]
+#[allow(dead_code)]
+pub enum FireUnitMessage {
+    MissileFired(IFFMessage),
+    FireUnitShutdown,
 }
 
 impl FireUnit {
-    pub fn new(fire_order_receiver: Receiver<IFFMessage>) -> Self {
+    pub fn new(
+        iff_message_receiver: Receiver<IFFMessage>,
+        fire_unit_sender: Sender<FireUnitMessage>,
+    ) -> Self {
         Self {
-            fire_order_receiver,
+            iff_message_receiver,
+            fire_unit_sender,
         }
     }
 
     pub async fn listen(&mut self) {
         loop {
-            match self.fire_order_receiver.recv().await {
+            match self.iff_message_receiver.recv().await {
                 Ok(msg) => match msg {
-                    IFFMessage::Fire => fire(),
+                    IFFMessage::HostileDetected => self.fire(msg).await,
+                    IFFMessage::FriendlyDetected => {}
                     IFFMessage::IFFShutDown => {
                         info!("IFF stream completed, shutting down fire unit");
                         break;
@@ -33,15 +43,11 @@ impl FireUnit {
             }
         }
     }
-}
 
-fn fire() {
-    info!("Firing missile!");
-    let mut rng = rand::rng();
-    let value = rng.random::<f32>();
-    if value < PK {
-        info!("... hit!");
-    } else {
-        info!("... miss!");
+    async fn fire(&self, iff_message: IFFMessage) {
+        info!("Firing missile!");
+        self.fire_unit_sender
+            .send(FireUnitMessage::MissileFired(iff_message))
+            .unwrap();
     }
 }

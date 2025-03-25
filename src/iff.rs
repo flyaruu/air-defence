@@ -1,22 +1,27 @@
-
 use log::{info, warn};
 use tokio::sync::broadcast::{Receiver, Sender};
 
-use crate::{IFFMessage, radar::RadarMessage};
+use crate::radar::RadarMessage;
 
+#[derive(Debug, Clone)]
+pub enum IFFMessage {
+    HostileDetected,
+    FriendlyDetected,
+    IFFShutDown,
+}
 pub struct Iff {
     radar_receiver: Receiver<RadarMessage>,
-    fire_order_sender: Sender<IFFMessage>,
+    iff_message_sender: Sender<IFFMessage>,
 }
 
 impl Iff {
     pub fn new(
         radar_receiver: Receiver<RadarMessage>,
-        fire_order_sender: Sender<IFFMessage>,
+        iff_message_sender: Sender<IFFMessage>,
     ) -> Self {
         Self {
             radar_receiver,
-            fire_order_sender,
+            iff_message_sender,
         }
     }
 
@@ -26,7 +31,13 @@ impl Iff {
                 Ok(msg) => match msg {
                     RadarMessage::Received(items) => {
                         if is_hostile(items) {
-                            self.fire_order_sender.send(IFFMessage::Fire).unwrap();
+                            self.iff_message_sender
+                                .send(IFFMessage::HostileDetected)
+                                .unwrap();
+                        } else {
+                            self.iff_message_sender
+                                .send(IFFMessage::FriendlyDetected)
+                                .unwrap();
                         }
                     }
                     RadarMessage::ScanError => {
@@ -34,7 +45,7 @@ impl Iff {
                     }
                     RadarMessage::EndOfData => {
                         info!("Radar reports no more data, shutting down IFF");
-                        self.fire_order_sender
+                        self.iff_message_sender
                             .send(IFFMessage::IFFShutDown)
                             .unwrap();
                     }
@@ -50,7 +61,7 @@ impl Iff {
 
 fn is_hostile(values: Vec<u8>) -> bool {
     let odd_count = values.iter().filter(|value| *value % 2 != 0).count();
-    
+
     odd_count << 1 > values.len()
 }
 

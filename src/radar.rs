@@ -44,7 +44,7 @@ impl<S: Iterator<Item = Result<String, std::io::Error>>> Radar<S> {
 
     pub async fn run(&mut self) {
         while !self.emit() {
-            info!("Tick!");
+            info!("Radar scan!");
             sleep(Duration::from_millis(self.delay_in_millis)).await;
         }
     }
