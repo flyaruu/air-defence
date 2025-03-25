@@ -7,6 +7,7 @@ mod tests {
     const DATA: &[u8] = include_bytes!("../../data.csv");
 
     #[tokio::test]
+    /// Run the original scenario, assert all stable outcomes
     async fn integration_test() {
         let c = Cursor::new(DATA);
 

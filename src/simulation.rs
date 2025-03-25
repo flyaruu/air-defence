@@ -68,8 +68,6 @@ pub async fn run_simulation_reader<R: Read + Send + 'static>(
         fire_assessment.listen().await;
     });
 
-    // let radar_statistics = statistics.clone();
-
     stats
         .radar_stats_task(radar_stats_receiver, &mut join_set)
         .await;

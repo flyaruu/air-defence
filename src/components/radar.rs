@@ -77,6 +77,7 @@ mod tests {
             parse_line("1000;1001"),
             RadarMessage::Received(..)
         ));
+        // Test invalid message
         assert!(matches!(
             parse_line("1001;monkey"),
             RadarMessage::ScanIntError(..)

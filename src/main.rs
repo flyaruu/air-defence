@@ -25,6 +25,7 @@ struct Args {
 #[tokio::main]
 async fn main() {
     let args = Args::parse();
+    // Set up log levels
     env_logger::init();
     run_simulation(args.delay, &args.path, args.channel_size)
         .await

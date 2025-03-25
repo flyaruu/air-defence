@@ -69,6 +69,7 @@ impl Iff {
     }
 }
 
+/// Actual calculation
 fn is_hostile(values: Vec<u8>) -> bool {
     let odd_count = values.iter().filter(|value| *value % 2 != 0).count();
 
@@ -80,6 +81,7 @@ mod tests {
     use crate::components::iff::is_hostile;
 
     #[test]
+    /// Test a few IFF scenarios
     fn test_hostile_calc() {
         assert!(!is_hostile(vec![]));
         assert!(!is_hostile(vec![2, 4]));

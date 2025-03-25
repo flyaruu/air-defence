@@ -101,7 +101,7 @@ impl Stats {
                         let mut stats = stats.lock().await;
                         stats.missiles_fired += 1;
                     }
-                    FireUnitMessage::FireUnitShutdown => todo!(),
+                    FireUnitMessage::FireUnitShutdown => break,
                 }
             }
         })
