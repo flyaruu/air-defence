@@ -1,7 +1,7 @@
 use log::{info, warn};
 use tokio::sync::broadcast::{Receiver, Sender};
 
-use crate::radar::RadarMessage;
+use super::radar::RadarMessage;
 
 #[derive(Debug, Clone)]
 pub enum IFFMessage {
@@ -77,7 +77,7 @@ fn is_hostile(values: Vec<u8>) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use crate::iff::is_hostile;
+    use crate::components::iff::is_hostile;
 
     #[test]
     fn test_hostile_calc() {

@@ -2,7 +2,7 @@ use log::{info, warn};
 use rand::Rng;
 use tokio::sync::broadcast::{Receiver, Sender};
 
-use crate::fire_unit::FireUnitMessage;
+use super::fire_unit::FireUnitMessage;
 
 pub const PK: f32 = 0.8;
 

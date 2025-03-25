@@ -19,4 +19,4 @@ jobs:
       - name: Test
         run: |
             cargo check
-            cargo test --all
+            cargo test

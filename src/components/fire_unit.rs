@@ -1,7 +1,7 @@
 use log::{info, warn};
 use tokio::sync::broadcast::{Receiver, Sender};
 
-use crate::iff::IFFMessage;
+use super::iff::IFFMessage;
 
 pub struct FireUnit {
     iff_message_receiver: Receiver<IFFMessage>,

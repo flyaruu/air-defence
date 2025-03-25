@@ -1,14 +1,16 @@
 use std::{
     fs::File,
-    io::{BufRead, BufReader},
+    io::{BufRead, BufReader, Read},
 };
 
 use thiserror::Error;
 use tokio::task::JoinSet;
 
 use crate::{
-    fire_assessment::FireAssessment, fire_unit::FireUnit, iff::Iff, radar::Radar, stats::Stats,
+    components::{fire_assessment::FireAssessment, fire_unit::FireUnit, iff::Iff, radar::Radar},
+    stats::{Statistics, Stats},
 };
+
 #[derive(Error, Debug)]
 pub enum SimulationError {
     #[error("Error reading file")]
@@ -21,7 +23,18 @@ pub async fn run_simulation(
     channel_size: usize,
 ) -> Result<(), SimulationError> {
     let reader = BufReader::new(File::open(path).map_err(SimulationError::IOError)?);
-    let text_lines = reader.lines();
+
+    let statistics = run_simulation_reader(delay_in_millis, channel_size, reader).await?;
+    statistics.display().await;
+    Ok(())
+}
+
+pub async fn run_simulation_reader<R: Read + Send + 'static>(
+    delay_in_millis: u64,
+    channel_size: usize,
+    buffered_reader: BufReader<R>,
+) -> Result<Statistics, SimulationError> {
+    let text_lines = buffered_reader.lines();
     let mut join_set = JoinSet::new();
 
     let stats = Stats::new();
@@ -70,6 +83,5 @@ pub async fn run_simulation(
         .fire_assessment_stats_task(fire_assessment_receiver, &mut join_set)
         .await;
     join_set.join_all().await;
-    stats.display().await;
-    Ok(())
+    Ok(stats.get_statistics().await)
 }

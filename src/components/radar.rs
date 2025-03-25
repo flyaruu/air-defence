@@ -69,7 +69,7 @@ fn parse_line(line: &str) -> RadarMessage {
 
 #[cfg(test)]
 mod tests {
-    use crate::radar::{RadarMessage, parse_line};
+    use crate::components::radar::{parse_line, RadarMessage};
 
     #[test]
     fn test_parser() {

@@ -1,10 +1,8 @@
 use clap::Parser;
 use simulation::run_simulation;
 
-mod fire_assessment;
-mod fire_unit;
-mod iff;
-mod radar;
+mod components;
+mod integration_tests;
 mod simulation;
 mod stats;
 

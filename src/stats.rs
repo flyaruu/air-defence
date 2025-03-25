@@ -1,27 +1,27 @@
 use std::sync::Arc;
 
 use comfy_table::{
-    Cell, ContentArrangement, Table, modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL,
+    modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL, Cell, ContentArrangement, Table,
 };
 use tokio::{
-    sync::{Mutex, broadcast::Receiver},
+    sync::{broadcast::Receiver, Mutex},
     task::{AbortHandle, JoinSet},
 };
 
-use crate::{
+use crate::components::{
     fire_assessment::FireAssessmentMessage, fire_unit::FireUnitMessage, iff::IFFMessage,
     radar::RadarMessage,
 };
 
-#[derive(Debug, Default)]
-struct Statistics {
-    scans: u64,
-    scan_errors: u64,
-    friendlies_detected: u64,
-    hostile_detected: u64,
-    missiles_fired: u64,
-    missiles_hit: u64,
-    missiles_missed: u64,
+#[derive(Debug, Default, Clone)]
+pub struct Statistics {
+    pub scans: u64,
+    pub scan_errors: u64,
+    pub friendlies_detected: u64,
+    pub hostile_detected: u64,
+    pub missiles_fired: u64,
+    pub missiles_hit: u64,
+    pub missiles_missed: u64,
 }
 
 pub struct Stats {
@@ -32,6 +32,10 @@ impl Stats {
     pub fn new() -> Self {
         let statistics = Arc::new(Mutex::new(Statistics::default()));
         Self { statistics }
+    }
+
+    pub async fn get_statistics(&self)->Statistics {
+        self.statistics.lock().await.clone()
     }
 
     pub async fn radar_stats_task(
@@ -125,9 +129,11 @@ impl Stats {
             }
         })
     }
+}
 
+impl Statistics {
     pub async fn display(&self) {
-        let stats = self.statistics.lock().await;
+        let stats = self;
         let mut table = Table::new();
         table
             .load_preset(UTF8_FULL)
@@ -167,4 +173,5 @@ impl Stats {
         // Set the default alignment for the third column to right
         println!("{table}");
     }
+
 }
