@@ -46,4 +46,48 @@ cargo build --release
 ## Using the cli tool
 You can run directly using cargo:
 ```
+cargo run --release
+```
+To show the parameters / switches:
+```
+cargo run --release -- --help
+```
+Yields:
+```
+Usage: air-defence [OPTIONS]
+
+Options:
+  -p, --path <PATH>                  Path to the data file [default: data.csv]
+  -d, --delay <DELAY>                Delay (in millis) between radar scans [default: 1000]
+  -c, --channel-size <CHANNEL_SIZE>  Channel size between components [default: 255]
+  -h, --help                         Print help
+  -V, --version                      Print version
+```
+
+### Log levels
+Log levels can be configured using the RUST_LOG environment variable, e.g.:
+```
+RUST_LOG=info
+```
+When running the command from the repository folder it will read the data.csv file, run the simulation (if the log level is high it will seem to hang for about 20s), and then it yields a nice result table:
+```
+cargo run --release
+```
+
+```
+╭─────────────────────┬────╮
+│ Radar scans         ┆ 20 │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌┤
+│ Scan errors         ┆ 0  │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌┤
+│ Friendlies detected ┆ 10 │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌┤
+│ Hostiles detected   ┆ 10 │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌┤
+│ Missiles fired      ┆ 10 │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌┤
+│ Missiles hit        ┆ 8  │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌┤
+│ Missiles missed     ┆ 2  │
+╰─────────────────────┴────╯
 ```
