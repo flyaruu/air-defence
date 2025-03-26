@@ -71,7 +71,7 @@ impl Iff {
 }
 
 /// Actual calculation
-fn is_hostile(values: &Vec<u8>) -> bool {
+fn is_hostile(values: &[u8]) -> bool {
     let odd_count = values.iter().filter(|value| *value % 2 != 0).count();
 
     odd_count << 1 > values.len()
