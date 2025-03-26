@@ -74,11 +74,11 @@ impl Stats {
         join_set.spawn(async move {
             while let Ok(msg) = receiver.recv().await {
                 match msg {
-                    IFFMessage::HostileDetected => {
+                    IFFMessage::HostileDetected(_) => {
                         let mut stats = stats.lock().await;
                         stats.hostile_detected += 1;
                     }
-                    IFFMessage::FriendlyDetected => {
+                    IFFMessage::FriendlyDetected(_) => {
                         let mut stats = stats.lock().await;
                         stats.friendlies_detected += 1;
                     }

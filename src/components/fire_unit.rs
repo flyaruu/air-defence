@@ -29,8 +29,8 @@ impl FireUnit {
         loop {
             match self.iff_message_receiver.recv().await {
                 Ok(msg) => match msg {
-                    IFFMessage::HostileDetected => self.fire(msg).await,
-                    IFFMessage::FriendlyDetected => {}
+                    IFFMessage::HostileDetected(_) => self.fire(msg).await,
+                    IFFMessage::FriendlyDetected(_) => {}
                     IFFMessage::IFFShutDown => {
                         info!("IFF stream completed, shutting down fire unit");
                         break;

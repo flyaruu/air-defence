@@ -4,9 +4,10 @@ use tokio::sync::broadcast::{Receiver, Sender};
 use super::radar::RadarMessage;
 
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub enum IFFMessage {
-    HostileDetected,
-    FriendlyDetected,
+    HostileDetected(RadarMessage),
+    FriendlyDetected(RadarMessage),
     IFFShutDown,
 }
 pub struct Iff {
@@ -28,15 +29,15 @@ impl Iff {
     pub async fn listen(&mut self) {
         loop {
             match self.radar_receiver.recv().await {
-                Ok(msg) => match msg {
+                Ok(msg) => match &msg {
                     RadarMessage::Received(items) => {
                         if is_hostile(items) {
                             self.iff_message_sender
-                                .send(IFFMessage::HostileDetected)
+                                .send(IFFMessage::HostileDetected(msg))
                                 .expect("error sending message");
                         } else {
                             self.iff_message_sender
-                                .send(IFFMessage::FriendlyDetected)
+                                .send(IFFMessage::FriendlyDetected(msg))
                                 .expect("error sending message");
                         }
                     }
@@ -70,7 +71,7 @@ impl Iff {
 }
 
 /// Actual calculation
-fn is_hostile(values: Vec<u8>) -> bool {
+fn is_hostile(values: &Vec<u8>) -> bool {
     let odd_count = values.iter().filter(|value| *value % 2 != 0).count();
 
     odd_count << 1 > values.len()
@@ -83,9 +84,9 @@ mod tests {
     #[test]
     /// Test a few IFF scenarios
     fn test_hostile_calc() {
-        assert!(!is_hostile(vec![]));
-        assert!(!is_hostile(vec![2, 4]));
-        assert!(!is_hostile(vec![2, 5]));
-        assert!(is_hostile(vec![1, 2, 5]));
+        assert!(!is_hostile(&vec![]));
+        assert!(!is_hostile(&vec![2, 4]));
+        assert!(!is_hostile(&vec![2, 5]));
+        assert!(is_hostile(&vec![1, 2, 5]));
     }
 }
